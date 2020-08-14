@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: CC0-1.0
+
+option('android',
+        type : 'boolean',
+        value : false,
+        description : 'Compile libcamera with Android Camera3 HAL interface')
+
+option('documentation',
+        type : 'boolean',
+        description : 'Generate the project documentation')
+
+option('gstreamer',
+        type : 'feature',
+        value : 'auto',
+        description : 'Compile libcamera GStreamer plugin')
+
+option('pipelines',
+        type : 'array',
+        choices : ['ipu3', 'raspberrypi', 'rkisp1', 'simple', 'uvcvideo', 'vimc'],
+        description : 'Select which pipeline handlers to include')
+
+option('qcam',
+        type : 'feature',
+        value : 'auto',
+        description : 'Compile the qcam test application')
+
+option('test',
+        type : 'boolean',
+        description: 'Compile and include the tests')
+
+option('v4l2',
+        type : 'boolean',
+        value : false,
+        description : 'Compile the V4L2 compatibility layer')
