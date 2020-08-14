@@ -93,6 +93,7 @@ libcamera_includes = include_directories('include')
 subdir('include')
 subdir('src')
 subdir('utils')
+subdir('test')
 
 # The documentation and test components are optional and can be disabled
 # through configuration values. They are enabled by default.

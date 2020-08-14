@@ -62,10 +62,10 @@ Log Levels:
 	export LIBCAMERA_LOG_LEVELS=0
 
 Run test app
-	step 1
-        step 2
-	step 3
+::
 
+  cd libcamera/build/test/mytests
+  ./capture
 
 
 
