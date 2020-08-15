@@ -6,7 +6,8 @@ camera_tests = [
 #    [ 'capture',                'capture1.cpp' ],	#Create cameramanager, start camera
 #    [ 'capture',                'capture2.cpp' ],	#+ stop camera
 #    [ 'capture',                'capture3.cpp' ],	#+ get camera ID, Acquire camera
-    [ 'capture',                'capture4.cpp' ],	#+ configure camera default settings and validate, stop camera
+#    [ 'capture',                'capture4.cpp' ],	#+ configure camera default settings and validate, stop camera
+    [ 'capture',                'capturei5.cpp' ],	#+ Allocate buffers
 
 ]
 
