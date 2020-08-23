@@ -18,7 +18,7 @@
  * 8)  Enable signal and slot mechanism
  * 9)  Start Capturing .i.e., prepare buffers and start queuing them
  * 10) Start Event displatcher for listening events and set timer signals
- * 11) Print buffer statistics
+ * 11) Print buffer statistics like FPS, seq num, bytesused and timestamp
  * 12) stop camera
  *
  *
@@ -49,6 +49,7 @@ FrameBufferAllocator *allocator_;
 
 
 std::chrono::steady_clock::time_point last_;
+
 
 static void requestComplete(Request *request)
 {
@@ -85,6 +86,7 @@ static void requestComplete(Request *request)
 			if (++nplane < metadata.planes.size())
 				info << "/";
 		}
+		info << " timestamp: " << metadata.timestamp;
 
 	}
 
@@ -259,7 +261,6 @@ int main()
 	timer.start(1000);
 	while (timer.isRunning())
 		dispatcher->processEvents();
-
 
 	cout << "Vikas: event Dispatcher POLL  done" << endl;
 
