@@ -18,10 +18,11 @@
  * 8)  Enable signal and slot mechanism
  * 9)  Start Capturing .i.e., prepare buffers and start queuing them
  * 10) Start Event displatcher for listening events and set timer signals
- * 11) stop camera
+ * 11) Print buffer statistics
+ * 12) stop camera
  *
  *
- * Filename: capture6.cpp
+ * Filename: capture7.cpp
  */
 
 #include <string.h>
@@ -29,6 +30,10 @@
 #include <iostream>
 #include <memory>
 
+#include <chrono>
+#include <iomanip>
+#include <limits.h>
+#include <sstream>
 
 #include <libcamera/libcamera.h>
 #include <libcamera/camera_manager.h>
@@ -43,11 +48,69 @@ unique_ptr<CameraConfiguration> config_;
 FrameBufferAllocator *allocator_;
 
 
+std::chrono::steady_clock::time_point last_;
+
 static void requestComplete(Request *request)
 {
+	std::map<libcamera::Stream *, std::string> streamName_;
 
 	if (request->status() == Request::RequestCancelled)
 		return;
+
+	const std::map<Stream *, FrameBuffer *> &buffers = request->buffers();
+
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	double fps = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_).count();
+	fps = last_ != std::chrono::steady_clock::time_point() && fps
+	    ? 1000.0 / fps : 0.0;
+	last_ = now;
+
+	std::stringstream info;
+	info << "fps: " << std::fixed << std::setprecision(2) << fps;
+
+	for (auto it = buffers.begin(); it != buffers.end(); ++it) {
+		Stream *stream = it->first;
+		FrameBuffer *buffer = it->second;
+		const std::string &name = streamName_[stream];
+
+		const FrameMetadata &metadata = buffer->metadata();
+
+		info << " " << name
+		     << " seq: " << std::setw(6) << std::setfill('0') << metadata.sequence
+		     << " bytesused: ";
+
+		unsigned int nplane = 0;
+		for (const FrameMetadata::Plane &plane : metadata.planes) {
+			info << plane.bytesused;
+			if (++nplane < metadata.planes.size())
+				info << "/";
+		}
+
+	}
+
+	cout << info.str() << endl;
+
+
+#if 1
+	/*
+	 * Create a new request and populate it with one buffer for each
+	 * stream.
+	 */
+	request = camera_->createRequest();
+	if (!request) {
+		cout << "Err: Can't create request" << endl;
+		return;
+	}
+
+	for (auto it = buffers.begin(); it != buffers.end(); ++it) {
+		Stream *stream = it->first;
+		FrameBuffer *buffer = it->second;
+
+		request->addBuffer(stream, buffer);
+	}
+
+	camera_->queueRequest(request);
+#endif
 }
 
 
@@ -97,10 +160,10 @@ int main()
 
 	cout << "Vikas: Configuration set +" << endl;
 	/* Create configuration like StillCapture, StillCaptureRaw, VideoRecording, Viewfinder  */
-	config_ = camera_->generateConfiguration( { StreamRole::Viewfinder } );
+//	config_ = camera_->generateConfiguration( { StreamRole::Viewfinder } );
 //	config_ = camera_->generateConfiguration( { StreamRole::StillCapture } );
 //	config_ = camera_->generateConfiguration( { StreamRole::StillCaptureRaw } );
-//	config_ = camera_->generateConfiguration( { StreamRole:: VideoRecording } );
+	config_ = camera_->generateConfiguration( { StreamRole:: VideoRecording } );
 
 	if (!config_) {
 		cout << "Warn: Failed to generate configuration from roles" << endl;
@@ -198,27 +261,20 @@ int main()
 		dispatcher->processEvents();
 
 
-
 	cout << "Vikas: event Dispatcher POLL  done" << endl;
 
-	/* Clean up camera */
-#if 1
-	cout << "Vikas: CameraManager close +" << endl;
 
-	delete allocator_;
+
+	/* Clean up camera */
+	cout << "Vikas: CameraManager close +" << endl;
 
 	ret = camera_->stop();
 	if (ret)
 		cout << "Err: Failed to stop capture" << endl;
 
 	camera_->requestCompleted.disconnect(requestComplete);
-	config_.reset();
-	camera_->release();
-	camera_.reset();
-	cm->stop();
+
 	cout << "Vikas: CameraManager close -" << endl;
-	delete cm;
-#endif
 
 	return 0;
 }

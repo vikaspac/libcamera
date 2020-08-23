@@ -8,7 +8,8 @@ camera_tests = [
 #    [ 'capture',                'capture3.cpp' ],	#+ get camera ID, Acquire camera
 #    [ 'capture',                'capture4.cpp' ],	#+ configure camera default settings and validate, stop camera
 #    [ 'capture',                'capture5.cpp' ],	#+ Allocate buffers
-    [ 'capture',                'capture6.cpp' ],	#+ Frame capure request creation, Enable signal & slot, start capturing data, start eventdispatcher for event notications
+#    [ 'capture',                'capture6.cpp' ],	#+ Frame capure request creation, Enable signal & slot, start capturing data, start eventdispatcher for event notications
+    [ 'capture',                'capture7.cpp' ],	#+ prints buffer stats like FPS, seq num, bytesused...
 
 ]
 
