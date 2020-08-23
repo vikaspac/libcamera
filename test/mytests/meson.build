@@ -9,7 +9,8 @@ camera_tests = [
 #    [ 'capture',                'capture4.cpp' ],	#+ configure camera default settings and validate, stop camera
 #    [ 'capture',                'capture5.cpp' ],	#+ Allocate buffers
 #    [ 'capture',                'capture6.cpp' ],	#+ Frame capure request creation, Enable signal & slot, start capturing data, start eventdispatcher for event notications
-    [ 'capture',                'capture7.cpp' ],	#+ prints buffer stats like FPS, seq num, bytesused...
+#    [ 'capture',                'capture7.cpp' ],	#+ prints buffer stats like FPS, seq num, bytesused and timestamp
+    [ 'capture',                'capture8.cpp' ],	#+ Add frame dump logice with macro option #define DUMP_BUFFER
 
 ]
 
